@@ -79,11 +79,43 @@ resource "aws_iam_role" "github_oidc_role" {
   })
 }
 
+# resource "aws_iam_policy" "s3_access_policy" {
+#   name   = "GitHubS3AccessPolicy"
+#   policy = jsonencode({
+#     Version = "2012-10-17",
+#     Statement = [
+#       {
+#         Effect = "Allow",
+#         Action = ["s3:ListBucket"],
+#         Resource = [aws_s3_bucket.example.arn]
+#       },
+#       {
+#         Effect = "Allow",
+#         Action = ["s3:GetObject", "s3:PutObject"],
+#         Resource = ["${aws_s3_bucket.example.arn}/*"]
+#       },
+#        # 🛠 Add backend bucket permissions
+#       {
+#         Effect = "Allow",
+#         Action = ["s3:ListBucket"],
+#         Resource = ["arn:aws:s3:::my-tfm-state-bucket-2025"]
+#       },
+#       {
+#         Effect = "Allow",
+#         Action = ["s3:GetObject", "s3:PutObject", "s3:DeleteObject"],
+#         Resource = ["arn:aws:s3:::my-tfm-state-bucket-2025/*"]
+#       }
+#     ]
+#   })
+# }
+
 resource "aws_iam_policy" "s3_access_policy" {
-  name   = "GitHubS3AccessPolicy"
+  name = "GitHubS3AccessPolicy"
+
   policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
+      # ✅ Required for your frontend deployment bucket
       {
         Effect = "Allow",
         Action = ["s3:ListBucket"],
@@ -94,7 +126,8 @@ resource "aws_iam_policy" "s3_access_policy" {
         Action = ["s3:GetObject", "s3:PutObject"],
         Resource = ["${aws_s3_bucket.example.arn}/*"]
       },
-       # 🛠 Add backend bucket permissions
+
+      # ✅ Required for your Terraform state backend bucket
       {
         Effect = "Allow",
         Action = ["s3:ListBucket"],
