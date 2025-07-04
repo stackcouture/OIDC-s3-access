@@ -52,36 +52,59 @@ resource "aws_iam_role" "github_oidc_role" {
 #   })
 # }
 
-resource "aws_iam_policy" "s3_access_policy" {
-  name = "GitHubS3AccessPolicy"
+# resource "aws_iam_policy" "s3_access_policy" {
+#   name = "GitHubS3AccessPolicy"
 
-  policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Effect = "Allow",
-        Action = [
-          "s3:ListBucket"
-        ],
-        Resource = [
-          "arn:aws:s3:::${var.s3_bucket_name}"
-        ]
-      },
-      {
-        Effect = "Allow",
-        Action = [
-          "s3:GetObject",
-          "s3:PutObject"
-        ],
-        Resource = [
-          "arn:aws:s3:::${var.s3_bucket_name}/*"
-        ]
-      }
-    ]
-  })
-}
+#   policy = jsonencode({
+#     Version = "2012-10-17",
+#     Statement = [
+#       {
+#         Effect = "Allow",
+#         Action = [
+#           "s3:ListBucket"
+#         ],
+#         Resource = [
+#           "arn:aws:s3:::${var.s3_bucket_name}"
+#         ]
+#       },
+#       {
+#         Effect = "Allow",
+#         Action = [
+#           "s3:GetObject",
+#           "s3:PutObject"
+#         ],
+#         Resource = [
+#           "arn:aws:s3:::${var.s3_bucket_name}/*"
+#         ]
+#       }
+#     ]
+#   })
+# }
 
 resource "aws_iam_role_policy_attachment" "attach_s3_policy" {
   role       = aws_iam_role.github_oidc_role.name
   policy_arn = aws_iam_policy.s3_access_policy.arn
+}
+
+locals {
+  s3_policy = {
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect   = "Allow",
+        Action   = ["s3:ListBucket"],
+        Resource = ["arn:aws:s3:::${var.s3_bucket_name}"]
+      },
+      {
+        Effect   = "Allow",
+        Action   = ["s3:GetObject", "s3:PutObject"],
+        Resource = ["arn:aws:s3:::${var.s3_bucket_name}/*"]
+      }
+    ]
+  }
+}
+
+resource "aws_iam_policy" "s3_access_policy" {
+  name   = "GitHubS3AccessPolicy"
+  policy = jsonencode(local.s3_policy)
 }
