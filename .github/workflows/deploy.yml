@@ -43,8 +43,10 @@ jobs:
       # - name: Terraform Apply
       #   run: terraform apply -auto-approve
 
-      - name: Upload index.html to S3
-        run: aws s3 cp ./index.html s3://${{ env.BUCKET_NAME }}/index.html
+      - name: Upload project to S3
+        #run: aws s3 cp ./index.html s3://${{ env.BUCKET_NAME }}/index.html
 
-      - name: List S3 Bucket Contents
-        run: aws s3 ls s3://${{ env.BUCKET_NAME }}/
+        run: aws s3 sync ./oxer-html s3://${{ env.BUCKET_NAME }} --delete --exact-timestamps
+
+      # - name: List S3 Bucket Contents
+      #   run: aws s3 ls s3://${{ env.BUCKET_NAME }}/
