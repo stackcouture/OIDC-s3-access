@@ -5,7 +5,7 @@ on:
     branches: [ "main" ]
 
 env:
-  BUCKET_NAME: "my-oidc-github-bucket-demo"
+  BUCKET_NAME: "my-oidc-github-bucket-demo-new"
   AWS_REGION: "ap-south-1"
 
 permissions:
