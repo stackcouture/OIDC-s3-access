@@ -1,0 +1,35 @@
+name: Deploy using OIDC
+
+on:
+  push:
+    branches: [ "main" ]
+env:
+  BUCKET_NAME : "my-oidc-github-bucket-demo"
+  AWS_REGION : "ap-south-1"
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials from OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::938320847138:role/GitHubActionsOIDCRole
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Print JWT Claims
+        run: |
+          curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+               "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=sts.amazonaws.com" | jq '.'
+      - name: Copy index.html to s3
+        run: |
+          aws s3 cp ./index.html s3://${{ env.BUCKET_NAME }}/
+      - name: List S3 bucket contents
+        run: aws s3 ls s3://${{ env.BUCKET_NAME }}/
