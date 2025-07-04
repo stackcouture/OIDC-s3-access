@@ -93,6 +93,17 @@ resource "aws_iam_policy" "s3_access_policy" {
         Effect = "Allow",
         Action = ["s3:GetObject", "s3:PutObject"],
         Resource = ["${aws_s3_bucket.example.arn}/*"]
+      },
+       # 🛠 Add backend bucket permissions
+      {
+        Effect = "Allow",
+        Action = ["s3:ListBucket"],
+        Resource = ["arn:aws:s3:::my-tfm-state-bucket-2025"]
+      },
+      {
+        Effect = "Allow",
+        Action = ["s3:GetObject", "s3:PutObject", "s3:DeleteObject"],
+        Resource = ["arn:aws:s3:::my-tfm-state-bucket-2025/*"]
       }
     ]
   })
