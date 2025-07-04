@@ -31,17 +31,17 @@ jobs:
           role-to-assume: arn:aws:iam::938320847138:role/GitHubActionsOIDCRole
           aws-region: ${{ env.AWS_REGION }}
 
-      # - name: Terraform Init
-      #   run: terraform init -reconfigure
+      - name: Terraform Init
+        run: terraform init -reconfigure
 
-      # - name: Terraform Validate
-      #   run: terraform validate
+      - name: Terraform Validate
+        run: terraform validate
 
-      # - name: Terraform Plan
-      #   run: terraform plan
+      - name: Terraform Plan
+        run: terraform plan
 
-      # - name: Terraform Apply
-      #   run: terraform apply -auto-approve
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
 
       - name: Upload project to S3
         #run: aws s3 cp ./index.html s3://${{ env.BUCKET_NAME }}/index.html
