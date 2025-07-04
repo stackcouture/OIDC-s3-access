@@ -23,7 +23,7 @@ jobs:
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.12.2
+          terraform_version: 1.5.7  # 🔄 Use a modern version
 
       - name: Configure AWS Credentials using OIDC
         uses: aws-actions/configure-aws-credentials@v4
@@ -32,32 +32,19 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Terraform Init
-        run: terraform init --reconfigure
+        run: terraform init -reconfigure
 
-      - name: Terraform validate
+      - name: Terraform Validate
         run: terraform validate
 
       - name: Terraform Plan
         run: terraform plan
-      
+
       - name: Terraform Apply
         run: terraform apply -auto-approve
 
-      # - name: Set bucket name from Terraform output
-      #   id: get_bucket
-      #   run: echo "BUCKET_NAME=$(terraform output -raw bucket_name)" >> $GITHUB_ENV
+      - name: Upload index.html to S3
+        run: aws s3 cp ./index.html s3://${{ env.BUCKET_NAME }}/index.html
 
-      - name: Sync static site to S3
-        run: aws s3 sync ./index.html s3://${{ env.BUCKET_NAME }} --delete --exact-timestamps
-
-      # - name: Print OIDC Token (for debug)
-      #   run: |
-      #     curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-      #          "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=sts.amazonaws.com" | jq '.'
-
-      # - name: Upload index.html to S3
-      #   run: |
-      #     aws s3 cp ./index.html s3://${{ env.BUCKET_NAME }}/
-
-      # - name: List S3 Bucket Contents
-      #   run: aws s3 ls s3://${{ env.BUCKET_NAME }}/
+      - name: List S3 Bucket Contents
+        run: aws s3 ls s3://${{ env.BUCKET_NAME }}/
