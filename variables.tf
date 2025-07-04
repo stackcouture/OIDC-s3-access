@@ -13,7 +13,7 @@
 
 variable "s3_bucket_name" {
   description = "S3 bucket name"
-  default     = "my-oidc-github-bucket-demo-new"
+  default     = "my-oidc-github-bucket-july-demo"
 }
 
 variable "repo_full_name" {
